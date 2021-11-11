@@ -1,0 +1,16 @@
+﻿@page
+@model KeepOnRipping.Pages.ArticleModel
+@{
+    ViewData["Title"] = "Article";
+}
+
+<div id="article">
+    @if ( @Model.HtmlContent == string.Empty )
+    {
+        @Html.Raw("<h1>What are you doing?</h1>");
+    }
+    else
+    {
+        @Html.Raw(@Model.HtmlContent)
+    }
+</div>

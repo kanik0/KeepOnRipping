@@ -1,0 +1,31 @@
+﻿@page
+@model KeepOnRipping.Pages.IndexModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<link rel="stylesheet" href="/css/main.css">
+
+<div class="jumbotron">
+  <div class="container">
+    <br />
+    <h1 class="post-title-main" itemprop="name headline">Keep on Ripping'!</h1>
+    <br />
+  </div>
+</div>
+
+<div class="post-content container" itemprop="articleBody">
+
+
+    <center>
+        <br />
+	    Insert the URL of the article you want to read: <br>
+	    <br>
+        <form action="/Article" method="post">
+            @Html.AntiForgeryToken()
+            <input type="text" name="articleURL" value="https://www.repubblica.it/salute/2021/11/09/news/diplopia_che_cos_e_il_disturbo_diagnosticato_a_marc_marquez-325736184/?ref=RHTP-BH-I322793271-P2-S8-T1"><br>
+            <input class="button" type="submit" value="Get Article" />
+        </form>
+    </center>
+
+</div>
