@@ -140,6 +140,12 @@ namespace KeepOnRipping.Pages
             document.GetElementById("article-body").OuterHtml = story.OuterHtml;
             document.GetElementById("paywall").Remove();
 
+            // Clean up for mobile devices
+            if (document.GetElementById("social-share-top") is not null)
+            {
+                document.GetElementById("social-share-top").Remove();
+            }
+
             Output.IsOk = true;
             Output.HtmlContent = document.DocumentElement.OuterHtml;
             return Output;
