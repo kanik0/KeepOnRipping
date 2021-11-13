@@ -12,6 +12,8 @@ namespace KeepOnRipping.Pages
 
         public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 
+        public string HtmlError { get; set; } = string.Empty;
+
         private readonly ILogger<ErrorModel> _logger;
 
         public ErrorModel(ILogger<ErrorModel> logger)
@@ -19,9 +21,14 @@ namespace KeepOnRipping.Pages
             _logger = logger;
         }
 
-        public void OnGet()
+        public void OnGet(string? error)
         {
             RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+
+            if (error is not null)
+            {
+                HtmlError = error;
+            }
         }
     }
 }

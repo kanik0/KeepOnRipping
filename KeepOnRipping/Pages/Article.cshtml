@@ -5,12 +5,12 @@
 }
 
 <div id="article">
-    @if ( @Model.HtmlContent == string.Empty )
+    @if ( @Model.ArticleResponse.IsOk == false )
     {
-        @Html.Raw("<h1>What are you doing?</h1>");
+        Response.Redirect($"/Error?error={@Model.ArticleResponse.HtmlContent}");
     }
     else
     {
-        @Html.Raw(@Model.HtmlContent)
+        @Html.Raw(@Model.ArticleResponse.HtmlContent)
     }
 </div>

@@ -8,7 +8,18 @@ namespace KeepOnRipping.Pages
     {
         private readonly ILogger<ArticleModel> _logger;
 
-        public string HtmlContent { get; set; } = string.Empty;
+        public class ArticleResponseObj
+        {
+            public bool IsOk { get; set; }
+            public string HtmlContent { get; set; }
+            public ArticleResponseObj(bool isok, string htmlcontent)
+            {
+                IsOk = isok;
+                HtmlContent = htmlcontent;
+            }
+        }
+
+        public ArticleResponseObj ArticleResponse { get; set; } = new(false, "");
 
         private static readonly HttpClient client = new();
 
@@ -23,24 +34,24 @@ namespace KeepOnRipping.Pages
 
         public async Task OnPostAsync(string articleURL)
         {
-            HtmlContent = "Loading..";
-
             // Handle Inserted URL and create two cleaned up URLs
             Uri ArticleURL;
             try
             {
                 ArticleURL = new(articleURL);
 
-                if (ArticleURL.Host != "repubblica.it" && ArticleURL.Host != "www.repubblica.it")
+                if (!ArticleURL.Host.EndsWith("repubblica.it"))
                 {
-                    HtmlContent = "<h1>Target site must be repubblica.it</h1>";
+                    ArticleResponse.IsOk = false;
+                    ArticleResponse.HtmlContent = "Target site must be repubblica.it.";
                     return;
                 }
                 
             }
             catch 
             {
-                HtmlContent = "<h1>Invalid URL.</h1>";
+                ArticleResponse.IsOk = false;
+                ArticleResponse.HtmlContent = "Invalid URL.";
                 return;
             }
 
@@ -56,7 +67,8 @@ namespace KeepOnRipping.Pages
             }
             catch (Exception ex)
             {
-                HtmlContent = $"Something went wrong (wrong URL?): {ex.Message}";
+                ArticleResponse.IsOk = false;
+                ArticleResponse.HtmlContent = $"Something went wrong (wrong URL?): {ex.Message}.";
                 return;
             }
             // AMP Article
@@ -67,17 +79,20 @@ namespace KeepOnRipping.Pages
             }
             catch (Exception ex)
             {
-                HtmlContent = $"Something went wrong: {ex.Message}";
+                ArticleResponse.IsOk = false;
+                ArticleResponse.HtmlContent = $"Something went wrong: {ex.Message}.";
                 return;
             }
 
             // Parse and build the final HTML
-            HtmlContent = await ParseAndBuild(originalArticleHTML, ampArticleHTML);
+            ArticleResponse = await ParseAndBuild(originalArticleHTML, ampArticleHTML);
 
         }
 
-        private static async Task<string> ParseAndBuild(string article, string ampArticle)
+        private static async Task<ArticleResponseObj> ParseAndBuild(string article, string ampArticle)
         {
+            ArticleResponseObj Output = new(false, "");
+
             // Use the default configuration for AngleSharp
             AngleSharp.IConfiguration config = Configuration.Default;
             // Create a new context for evaluating webpages with the given config
@@ -102,7 +117,9 @@ namespace KeepOnRipping.Pages
             }
             catch (Exception ex)
             {
-                return $"Couldn't find article-body or story__text: {ex}";
+                Output.IsOk = false;
+                Output.HtmlContent = $"Couldn't find article-body or story__text: {ex}.";
+                return Output;
             }
 
             try
@@ -114,15 +131,18 @@ namespace KeepOnRipping.Pages
             }
             catch (Exception ex)
             {
-                return $"Couldn't find content in story: {ex}";
+                Output.IsOk = false;
+                Output.HtmlContent = $"Couldn't find content in story: {ex}.";
+                return Output;
             }
 
             // Replace original article
             document.GetElementById("article-body").OuterHtml = story.OuterHtml;
             document.GetElementById("paywall").Remove();
 
-
-            return document.DocumentElement.OuterHtml;
+            Output.IsOk = true;
+            Output.HtmlContent = document.DocumentElement.OuterHtml;
+            return Output;
         }
     }
 }
