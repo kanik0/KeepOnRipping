@@ -68,7 +68,7 @@ namespace KeepOnRipping.Pages
             catch (Exception ex)
             {
                 ArticleResponse.IsOk = false;
-                ArticleResponse.HtmlContent = $"Something went wrong (wrong URL?): {ex.Message}.";
+                ArticleResponse.HtmlContent = $"Something went wrong (wrong URL?): {ex.Message}";
                 return;
             }
             // AMP Article
@@ -80,7 +80,7 @@ namespace KeepOnRipping.Pages
             catch (Exception ex)
             {
                 ArticleResponse.IsOk = false;
-                ArticleResponse.HtmlContent = $"Something went wrong: {ex.Message}.";
+                ArticleResponse.HtmlContent = $"Something went wrong: {ex.Message}";
                 return;
             }
 
@@ -118,7 +118,7 @@ namespace KeepOnRipping.Pages
             catch (Exception ex)
             {
                 Output.IsOk = false;
-                Output.HtmlContent = $"Couldn't find article-body or story__text: {ex}.";
+                Output.HtmlContent = $"Couldn't find article-body or story__text: {ex}";
                 return Output;
             }
 
@@ -132,7 +132,7 @@ namespace KeepOnRipping.Pages
             catch (Exception ex)
             {
                 Output.IsOk = false;
-                Output.HtmlContent = $"Couldn't find content in story: {ex}.";
+                Output.HtmlContent = $"Couldn't find content in story: {ex}";
                 return Output;
             }
 

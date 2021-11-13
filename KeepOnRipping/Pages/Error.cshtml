@@ -1,5 +1,6 @@
 ﻿@page
 @model KeepOnRipping.Pages.ErrorModel
+@using System.Text
 @{
     ViewData["Title"] = "Error";
 }
@@ -19,7 +20,17 @@
 {
     <br />
     <center>
-        @Html.Encode(@Model.HtmlError)
+        @{
+            try
+            {
+                string error = Encoding.UTF8.GetString(Convert.FromBase64String(@Model.HtmlError));
+                @Html.Encode(error)
+            }
+            catch
+            {
+                @Html.Raw("Error was not encoded correctly.")
+            }
+        }
     </center>
     <br /><br /><br />
 }

@@ -39,3 +39,11 @@ input[type=text] {
     url('/fonts/fira-mono-v9-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
     url('/fonts/fira-mono-v9-latin-regular.svg#FiraMono') format('svg'); /* Legacy iOS */
 }
+
+.navbar-fixed-bottom {
+    margin-bottom: 0;
+    bottom: 0;
+    position: fixed;
+    right: 0;
+    left: 0;
+}
