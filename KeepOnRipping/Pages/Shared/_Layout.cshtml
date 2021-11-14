@@ -15,7 +15,7 @@
     <nav class="navbar navbar-default navbar-fixed-bottom">
       <div class="footer-content">
         <br>
-        <a href="/">Keep on Rippin' - Home</a> - v1.0.@Environment.GetEnvironmentVariables()["$GITHUB_RUN_NUMBER"]
+        <a href="/">Keep on Rippin' - Home</a> - v1.0.@Environment.GetEnvironmentVariables()["${{env.GITHUB_RUN_NUMBER}}"]
       </div>
     </nav>
 </body>
