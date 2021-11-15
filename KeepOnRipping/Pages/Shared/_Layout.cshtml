@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@using System.Reflection
+@{
+    string version = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -15,7 +19,7 @@
     <nav class="navbar navbar-default navbar-fixed-bottom">
       <div class="footer-content">
         <br>
-        <a href="/">Keep on Rippin' - Home</a> - v1.0.@Environment.GetEnvironmentVariables()["${{ env.GITHUB_RUN_NUMBER }}"]
+        <a href="/">Keep on Rippin' - Home</a> - v.@version
       </div>
     </nav>
 </body>
