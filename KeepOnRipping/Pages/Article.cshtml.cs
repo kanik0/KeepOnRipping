@@ -1,6 +1,7 @@
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using AngleSharp;
+using System.Text;
 
 namespace KeepOnRipping.Pages
 {
@@ -10,16 +11,22 @@ namespace KeepOnRipping.Pages
 
         public class ArticleResponseObj
         {
+            public bool IsSharedUrl { get; set; }
             public bool IsOk { get; set; }
             public string HtmlContent { get; set; }
-            public ArticleResponseObj(bool isok, string htmlcontent)
+            public ArticleResponseObj(bool issharedurl, bool isok, string htmlcontent)
             {
+                IsSharedUrl = issharedurl;
                 IsOk = isok;
                 HtmlContent = htmlcontent;
             }
         }
 
-        public ArticleResponseObj ArticleResponse { get; set; } = new(false, "");
+        public string DecodedUrl { get; set; } = String.Empty;
+
+        public ArticleResponseObj ArticleResponse { get; set; } = new(false, false, "");
+
+        public string ShareUrl { get; set; } = String.Empty;
 
         private static readonly HttpClient client = new();
 
@@ -28,12 +35,37 @@ namespace KeepOnRipping.Pages
             _logger = logger;
         }
 
-        public void OnGet()
+        public void OnGet(string? EncodedUrl)
         {
+            ArticleResponse.IsSharedUrl = true;
+
+            if (EncodedUrl is not null)
+            {
+                try
+                {
+                    DecodedUrl = Encoding.UTF8.GetString(Convert.FromBase64String(EncodedUrl));
+                    ArticleResponse.IsOk = true;
+                }
+                catch
+                {
+                    ArticleResponse.IsOk = false;
+                    ArticleResponse.HtmlContent = "Invalid Encoded URL.";
+                    return;
+                }
+            }
+            else
+            {
+                ArticleResponse.IsOk = false;
+                ArticleResponse.HtmlContent = "No URL provided.";
+            }
+
         }
 
         public async Task OnPostAsync(string articleURL)
         {
+            // Set ShareUrl for footer
+            ShareUrl = Convert.ToBase64String(Encoding.UTF8.GetBytes(articleURL));
+
             // Handle Inserted URL and create two cleaned up URLs
             Uri ArticleURL;
             try
@@ -91,7 +123,7 @@ namespace KeepOnRipping.Pages
 
         private static async Task<ArticleResponseObj> ParseAndBuild(string article, string ampArticle)
         {
-            ArticleResponseObj Output = new(false, "");
+            ArticleResponseObj Output = new(false, false, "");
 
             // Use the default configuration for AngleSharp
             AngleSharp.IConfiguration config = Configuration.Default;

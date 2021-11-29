@@ -14,6 +14,18 @@
     }
     else
     {
-        @Html.Raw(@Model.ArticleResponse.HtmlContent)
+        if (@Model.ArticleResponse.IsSharedUrl == false)
+        {
+            @Html.Raw(@Model.ArticleResponse.HtmlContent)
+            <script>window.onload = function(){ document.getElementById("shareurl").href = "/Article?EncodedUrl=@Model.ShareUrl" }</script>
+        }
+        else
+        {
+            <script>window.onload = function(){ document.forms['redirectForm'].submit() }</script>
+            <form name="redirectForm" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="articleURL" value="@Model.DecodedUrl"><br>
+            </form>
+        }
     }
 </div>
